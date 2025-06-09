@@ -1,73 +1,226 @@
-# Welcome to your Lovable project
 
-## Project info
+# UPC Product Review System
 
-**URL**: https://lovable.dev/projects/145276cc-5b02-438d-bfbe-4030b3b1f04a
+A comprehensive Django-based web application for managing UPC product submissions with role-based approval workflows.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+### 🎯 Core Functionality
+- **Role-based Authentication**: Admin, Manager, and Team Member roles
+- **Product Submission**: UPC/EAN code entry with detailed product information
+- **Review Workflow**: Approval/rejection system with notification alerts
+- **Dynamic Attributes**: Custom key-value pairs for additional product information
+- **Edit Logging**: Complete audit trail of all product changes
 
-**Use Lovable**
+### 👥 User Roles
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/145276cc-5b02-438d-bfbe-4030b3b1f04a) and start prompting.
+**Admin**
+- Complete system access and user management
+- View analytics and export capabilities
+- Manage categories, sizes, and system settings
+- Access to all products and edit logs
 
-Changes made via Lovable will be committed automatically to this repo.
+**Manager**
+- Review and approve/reject product submissions
+- Provide detailed rejection feedback
+- View review statistics and activity logs
 
-**Use your preferred IDE**
+**Team Member**
+- Submit new products for review
+- Edit and resubmit rejected products
+- View personal submission history and notifications
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 🔔 Notifications
+- In-app notification system for status updates
+- Real-time alerts for rejected products
+- Direct links to edit rejected submissions
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 📊 Dashboard Features
+- Role-specific dashboards with relevant metrics
+- Product status tracking (Approved, Under Review, Rejected)
+- Recent activity feeds and quick actions
+- Search and filter capabilities
 
-Follow these steps:
+## Technology Stack
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- **Backend**: Django 4.2.7 (Python 3.10+)
+- **Frontend**: Bootstrap 5.1.3 + Custom CSS
+- **Database**: SQLite (development) / PostgreSQL (production ready)
+- **Icons**: Bootstrap Icons
+- **Authentication**: Django's built-in auth system
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Quick Start
 
-# Step 3: Install the necessary dependencies.
-npm i
+### 1. Installation
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```bash
+# Clone the repository
+git clone <repository-url>
+cd upc-system
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-**Edit a file directly in GitHub**
+### 2. Database Setup
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+# Run migrations
+python manage.py makemigrations
+python manage.py migrate
 
-**Use GitHub Codespaces**
+# Create demo users and sample data
+python setup_demo.py
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### 3. Run the Application
 
-## What technologies are used for this project?
+```bash
+python manage.py runserver
+```
 
-This project is built with:
+Visit `http://127.0.0.1:8000` and login with demo credentials:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Admin**: `admin` / `admin123`
+- **Manager**: `manager` / `manager123`  
+- **Team Member**: `team` / `team123`
 
-## How can I deploy this project?
+## Project Structure
 
-Simply open [Lovable](https://lovable.dev/projects/145276cc-5b02-438d-bfbe-4030b3b1f04a) and click on Share -> Publish.
+```
+upc_system/
+├── accounts/           # User management and authentication
+├── products/          # Core product functionality
+├── notifications/     # In-app notification system
+├── templates/         # HTML templates
+├── static/           # CSS, JS, and static assets
+├── manage.py         # Django management script
+├── setup_demo.py     # Demo data creation script
+└── requirements.txt  # Python dependencies
+```
 
-## Can I connect a custom domain to my Lovable project?
+## Key Features in Detail
 
-Yes, you can!
+### Product Submission Workflow
+1. Team members submit products with UPC codes and details
+2. Products automatically enter "Under Review" status
+3. Managers/Admins can approve or reject with reasons
+4. Rejected products can be edited and resubmitted
+5. All actions are logged for audit purposes
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Dynamic Product Attributes
+- Add custom key-value pairs (e.g., "Country of Origin: United States")
+- Flexible attribute system for any product type
+- Easy management through the web interface
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Advanced Admin Features
+- User management with role assignment
+- Category and size management
+- Comprehensive edit logs with filtering
+- CSV export with custom filters
+- System analytics and reporting
+
+### Mobile-Responsive Design
+- Clean, modern interface built with Bootstrap
+- Collapsible sidebar navigation
+- Touch-friendly controls and forms
+- Optimized for all device sizes
+
+## API Endpoints
+
+The system includes several AJAX endpoints for enhanced functionality:
+
+- `/ajax/toggle-user-status/<id>/` - Toggle user active status
+- `/notifications/mark-all-read/` - Mark all notifications as read
+- `/export/` - CSV export with filters
+
+## Security Features
+
+- CSRF protection on all forms
+- Role-based access control
+- Input validation and sanitization
+- Secure password requirements
+- Session management
+
+## Customization
+
+### Adding New Roles
+1. Update `ROLE_CHOICES` in `accounts/models.py`
+2. Add permission checks in views
+3. Create role-specific templates
+4. Update navigation and dashboard logic
+
+### Custom Product Fields
+1. Add fields to `Product` model
+2. Update forms and templates
+3. Run migrations
+4. Update admin interface if needed
+
+## Production Deployment
+
+### Environment Variables
+Create a `.env` file with:
+
+```env
+SECRET_KEY=your-secret-key-here
+DEBUG=False
+ALLOWED_HOSTS=yourdomain.com
+DATABASE_URL=postgres://user:pass@localhost/dbname
+```
+
+### Static Files
+```bash
+python manage.py collectstatic
+```
+
+### Database
+For PostgreSQL production setup:
+
+```python
+# In settings.py
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'upc_system',
+        'USER': 'your_user',
+        'PASSWORD': 'your_password',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+```
+
+## Testing
+
+Run the test suite:
+
+```bash
+python manage.py test
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For questions or issues:
+1. Check the documentation
+2. Review existing GitHub issues
+3. Create a new issue with detailed information
+
+---
+
+**Built with Django and modern web technologies for efficient product management workflows.**

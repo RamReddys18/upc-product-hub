@@ -1,0 +1,211 @@
+
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - UPC System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-plus-circle me-2"></i>{{ title }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post" id="productForm">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.name.id_for_label }}" class="form-label">Product Name *</label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.name.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.brand_name.id_for_label }}" class="form-label">Brand Name *</label>
+                                {{ form.brand_name }}
+                                {% if form.brand_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.brand_name.errors }}</div>
+                                {% endif %}
+                                <div class="form-text">Will be automatically converted to title case</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.upc.id_for_label }}" class="form-label">UPC *</label>
+                                {{ form.upc }}
+                                {% if form.upc.errors %}
+                                    <div class="text-danger small mt-1">{{ form.upc.errors }}</div>
+                                {% endif %}
+                                <div class="form-text">Will be automatically converted to uppercase</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.ean.id_for_label }}" class="form-label">EAN</label>
+                                {{ form.ean }}
+                                {% if form.ean.errors %}
+                                    <div class="text-danger small mt-1">{{ form.ean.errors }}</div>
+                                {% endif %}
+                                <div class="form-text">Optional - Will be automatically converted to uppercase</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">Description *</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger small mt-1">{{ form.description.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.size.id_for_label }}" class="form-label">Size *</label>
+                                {{ form.size }}
+                                {% if form.size.errors %}
+                                    <div class="text-danger small mt-1">{{ form.size.errors }}</div>
+                                {% endif %}
+                                
+                                <div class="mt-2">
+                                    <label for="{{ form.custom_size.id_for_label }}" class="form-label">Or add new size:</label>
+                                    {{ form.custom_size }}
+                                    {% if form.custom_size.errors %}
+                                        <div class="text-danger small mt-1">{{ form.custom_size.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.category.id_for_label }}" class="form-label">Category *</label>
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                    <div class="text-danger small mt-1">{{ form.category.errors }}</div>
+                                {% endif %}
+                                
+                                <div class="mt-2">
+                                    <label for="{{ form.custom_category.id_for_label }}" class="form-label">Or add new category:</label>
+                                    {{ form.custom_category }}
+                                    {% if form.custom_category.errors %}
+                                        <div class="text-danger small mt-1">{{ form.custom_category.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Attributes -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h6 class="mb-0">Additional Information</h6>
+                            <small class="text-muted">Add custom attributes like Country of Origin, Material, etc.</small>
+                        </div>
+                        <div class="card-body">
+                            {{ formset.management_form }}
+                            <div id="attribute-forms">
+                                {% for form in formset %}
+                                    <div class="attribute-form row mb-2">
+                                        <div class="col-md-5">
+                                            {{ form.key }}
+                                            {% if form.key.errors %}
+                                                <div class="text-danger small">{{ form.key.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-5">
+                                            {{ form.value }}
+                                            {% if form.value.errors %}
+                                                <div class="text-danger small">{{ form.value.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-2">
+                                            {% if form.DELETE %}
+                                                {{ form.DELETE }}
+                                                <label for="{{ form.DELETE.id_for_label }}" class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash"></i>
+                                                </label>
+                                            {% endif %}
+                                        </div>
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="add-attribute">
+                                <i class="bi bi-plus me-2"></i>Add Another Attribute
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% if product %}{% url 'products:product_detail' product.pk %}{% else %}{% url 'products:product_list' %}{% endif %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check me-2"></i>{{ title }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add new attribute form functionality
+    const addButton = document.getElementById('add-attribute');
+    const formsContainer = document.getElementById('attribute-forms');
+    let formCount = {{ formset.total_form_count }};
+    
+    addButton.addEventListener('click', function() {
+        const emptyForm = document.querySelector('.attribute-form').cloneNode(true);
+        const formRegex = RegExp(`attributes-(\\d+)-`, 'g');
+        
+        emptyForm.innerHTML = emptyForm.innerHTML.replace(formRegex, `attributes-${formCount}-`);
+        emptyForm.querySelectorAll('input').forEach(input => {
+            input.value = '';
+            input.checked = false;
+        });
+        
+        formsContainer.appendChild(emptyForm);
+        formCount++;
+        
+        // Update management form
+        document.getElementById('id_attributes-TOTAL_FORMS').value = formCount;
+    });
+    
+    // Auto-uppercase UPC and EAN fields
+    const upcField = document.getElementById('{{ form.upc.id_for_label }}');
+    const eanField = document.getElementById('{{ form.ean.id_for_label }}');
+    
+    if (upcField) {
+        upcField.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    }
+    
+    if (eanField) {
+        eanField.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    }
+});
+</script>
+{% endblock %}
